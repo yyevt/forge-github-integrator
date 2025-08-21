@@ -1,0 +1,20 @@
+modules:
+  jira:adminPage:
+    - key: forge-github-integrator-hello-world-admin-page
+      resource: main
+      resolver:
+        function: resolver
+      render: native
+      title: Forge GitHub Integrator
+  function:
+    - key: resolver
+      handler: index.handler
+resources:
+  - key: main
+    path: src/frontend/index.jsx
+app:
+  runtime:
+    name: nodejs22.x
+    memoryMB: 256
+    architecture: arm64
+  id: ari:cloud:ecosystem::app/6f2b818a-c927-4cf1-a438-2361c7a80f49
