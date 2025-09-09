@@ -1,17 +1,54 @@
 modules:
   jira:adminPage:
-    - key: forge-github-integrator-hello-world-admin-page
-      resource: main
-      resolver:
-        function: resolver
-      render: native
+    - key: forge-github-integrator-admin-page
       title: Forge GitHub Integrator
+      resource: appPage
+      render: native
+      resolver:
+        function: resolveApi
+
+  webtrigger:
+    - key: github-merge-events-webtrigger
+      function: handleGithubEvents
+      response:
+        type: dynamic
+
+  consumer:
+    - key: github-merge-events-consumer
+      queue: merge-events-queue
+      function: listenQueueEvents
+
   function:
-    - key: resolver
-      handler: index.handler
+    - key: resolveApi
+      handler: index.apiResolver
+    - key: handleGithubEvents
+      handler: index.githubWebhookHandler
+    - key: listenQueueEvents
+      handler: index.queueListener
+
 resources:
-  - key: main
-    path: src/frontend/index.jsx
+  - key: appPage
+    path: src/frontend/index.tsx
+
+permissions:
+  scopes:
+    - storage:app
+    - read:jira-work
+    - write:jira-work
+  external:
+    fetch:
+      backend:
+        - address: https://api.github.com
+
+environment:
+  variables:
+    - key: FETCH_REPOS_LIMIT
+      default: "100"
+    - key: FETCH_LANGUAGES_LIMIT
+      default: "100"
+    - key: FETCH_PRS_LIMIT
+      default: "100"
+
 app:
   runtime:
     name: nodejs22.x
