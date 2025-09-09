@@ -16,17 +16,16 @@ export class JiraApi {
         return this.request("GET", route`/rest/api/3/issue/${issueKey}/transitions`);
     }
 
-    public async doTransition(issueKey: string, transition: {transition: { id: string }}): Promise<void> {
+    public async doTransition(issueKey: string, transition: { transition: { id: string } }): Promise<void> {
         return this.request("POST", route`/rest/api/3/issue/${issueKey}/transitions`, JSON.stringify(transition));
     }
 
     private async request<T>(method: string, url: Route, body?: string): Promise<T> {
         const resp = await asApp().requestJira(url, {
             method,
-            headers: {
-                "Accept": "application/json",
-                "Content-Type": "application/json"
-            },
+            headers: body
+                ? {"Accept": "application/json", "Content-Type": "application/json"}
+                : {"Accept": "application/json"},
             redirect: "follow",
             body
         });
