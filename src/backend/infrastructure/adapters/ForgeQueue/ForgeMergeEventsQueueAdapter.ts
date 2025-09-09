@@ -1,13 +1,20 @@
 import {Queue} from "@forge/events";
 import {MergeEventsQueue, QueueJobStats} from "../../../application/ports/MergeEventsQueue";
+import {assertNonEmpty} from "../../../utils/StringUtils";
 
 export class ForgeMergeEventsQueueAdapter implements MergeEventsQueue {
 
-    private static readonly QUEUE = new Queue({key: "merge-events-queue"});
+    private readonly queue;
+
+    constructor(queueName: string) {
+        assertNonEmpty(queueName, "Queue name must be provided");
+
+        this.queue = new Queue({key: queueName});
+    }
 
     public async push(event: Record<string, unknown>): Promise<QueueJobStats> {
-        const pushResult = await ForgeMergeEventsQueueAdapter.QUEUE.push({body: event});
-        const stats = await ForgeMergeEventsQueueAdapter.QUEUE.getJob(pushResult.jobId).getStats();
+        const pushResult = await this.queue.push({body: event});
+        const stats = await this.queue.getJob(pushResult.jobId).getStats();
 
         return {
             success: stats.success,

@@ -3,14 +3,14 @@ import {GithubWebhookPullMetadata} from "./GithubWebhookTypes";
 import {StatusCodes} from "http-status-codes";
 import {getAppContext, webTrigger} from "@forge/api";
 import {GithubWebhookPullMetadataMapper} from "./GithubWebhookPullMetadataMapper";
-import {UseCases} from "../../di/UseCases";
+import {BusinessOperations} from "../../di/BusinessOperations";
 
 if (getAppContext().environmentType === "DEVELOPMENT") {
     webTrigger.getUrl("github-merge-events-webtrigger")
         .then(webTriggerUrl => console.log("** WEB TRIGGER URL ** : ", webTriggerUrl));
 }
 
-const useCases = new UseCases();
+const businessOperations = new BusinessOperations();
 
 const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerResponse> => {
     if (!req.body) {
@@ -33,7 +33,7 @@ const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerRespons
 
     const pullAction = new GithubWebhookPullMetadataMapper().mapToEntity(body);
     try {
-        await useCases.notifyPullIsMerged(pullAction);
+        await businessOperations.notifyPullIsMerged(pullAction);
     } catch (e) {
         return sendTextResponse(StatusCodes.INTERNAL_SERVER_ERROR, (e instanceof Error ? e.message : String(e)));
     }
