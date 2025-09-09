@@ -10,7 +10,7 @@ export class ApprovePullRequestUseCase {
     ) {
     }
 
-    public async execute(accountId: string, repo: string, pullNumber: number): Promise<void> {
+    public async exec(accountId: string, repo: string, pullNumber: number): Promise<void> {
         assertNonEmpty(accountId, "accountId is required");
         assertNonEmpty(repo, "repo is required");
 

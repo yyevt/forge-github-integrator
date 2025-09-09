@@ -10,7 +10,7 @@ export class NotifyPullRequestIsMergedUseCase {
     ) {
     }
 
-    public async execute(pullAction: PullRequestAction): Promise<void> {
+    public async exec(pullAction: PullRequestAction): Promise<void> {
         const issueKey = this.extractIssueKey([pullAction.title, pullAction.head.label, pullAction.head.ref]);
         if (!issueKey) {
             console.warn(`No issue key found in merge: ${pullAction.number}`);

@@ -1,16 +1,16 @@
 import {WebTriggerRequest, WebTriggerResponse} from "@forge/api/out/webTrigger";
 import {GithubWebhookPullMetadata} from "./GithubWebhookTypes";
-import {JiraIssueKeyExtractor} from "../../adapters/Jira/JiraIssueKeyExtractor";
-import {ForgeMergeEventsQueueAdapter} from "../../adapters/ForgeQueue/ForgeMergeEventsQueueAdapter";
 import {StatusCodes} from "http-status-codes";
 import {getAppContext, webTrigger} from "@forge/api";
-import {NotifyPullRequestIsMergedUseCase} from "../../../application/usecases/NotifyPullRequestIsMerged/NotifyPullRequestIsMergedUseCase";
 import {GithubWebhookPullMetadataMapper} from "./GithubWebhookPullMetadataMapper";
+import {UseCases} from "../../di/UseCases";
 
 if (getAppContext().environmentType === "DEVELOPMENT") {
     webTrigger.getUrl("github-merge-events-webtrigger")
         .then(webTriggerUrl => console.log("** WEB TRIGGER URL ** : ", webTriggerUrl));
 }
+
+const useCases = new UseCases();
 
 const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerResponse> => {
     if (!req.body) {
@@ -32,9 +32,8 @@ const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerRespons
     }
 
     const pullAction = new GithubWebhookPullMetadataMapper().mapToEntity(body);
-    const useCase = new NotifyPullRequestIsMergedUseCase(new JiraIssueKeyExtractor(), new ForgeMergeEventsQueueAdapter());
     try {
-        await useCase.execute(pullAction);
+        await useCases.notifyPullIsMerged(pullAction);
     } catch (e) {
         return sendTextResponse(StatusCodes.INTERNAL_SERVER_ERROR, (e instanceof Error ? e.message : String(e)));
     }

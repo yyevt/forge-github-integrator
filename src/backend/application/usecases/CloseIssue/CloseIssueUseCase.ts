@@ -13,7 +13,7 @@ export class CloseIssueUseCase {
     ) {
     }
 
-    public async execute(issueKey: string): Promise<void> {
+    public async exec(issueKey: string): Promise<void> {
         assertNonEmpty(issueKey, "issueKey is required");
 
         const issue = await this.retrieveIssue(issueKey);

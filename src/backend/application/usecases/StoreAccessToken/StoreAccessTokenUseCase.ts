@@ -10,7 +10,7 @@ export class StoreAccessTokenUseCase {
     ) {
     }
 
-    public async execute(accountId: string, accessToken: string): Promise<void> {
+    public async exec(accountId: string, accessToken: string): Promise<void> {
         assertNonEmpty(accountId, "accountId is required");
         assertNonEmpty(accessToken, "accessToken is required");
 

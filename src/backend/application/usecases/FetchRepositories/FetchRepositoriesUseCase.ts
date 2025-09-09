@@ -28,7 +28,7 @@ export class FetchRepositoriesUseCase {
     ) {
     }
 
-    public async execute(accountId: string): Promise<ReadonlyArray<IssueAwareVcsRepository>> {
+    public async exec(accountId: string): Promise<ReadonlyArray<IssueAwareVcsRepository>> {
         assertNonEmpty(accountId, "accountId is required");
 
         const accessToken = await this.accessTokenStorage.get(accountId);

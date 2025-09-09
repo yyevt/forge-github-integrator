@@ -3,7 +3,11 @@ import {IssueAwareVcsRepository} from "../../../domain/entities/IssueAwareVcsRep
 
 export class VcsRepositoryPresentationMapper {
 
-    public mapToPresentationDto(repository: IssueAwareVcsRepository): RepositoryPresentationDto {
+    public mapToPresentation(vcsRepositories: ReadonlyArray<IssueAwareVcsRepository>): ReadonlyArray<RepositoryPresentationDto> {
+        return vcsRepositories.map(r => this.mapToPresentationDto(r))
+    }
+
+    private mapToPresentationDto(repository: IssueAwareVcsRepository): RepositoryPresentationDto {
         return {
             name: repository.info.name,
             url: repository.info.url,

@@ -68,7 +68,7 @@ export class GithubApi {
     }
 
     private calculateWaitSeconds(resetTimeEpochSeconds: number): number {
-        const currentTimeEpochSeconds = Math.floor(Date.now() / 1000);
+        const currentTimeEpochSeconds = Math.ceil(Date.now() / 1000);
         return resetTimeEpochSeconds - currentTimeEpochSeconds;
     }
 }
