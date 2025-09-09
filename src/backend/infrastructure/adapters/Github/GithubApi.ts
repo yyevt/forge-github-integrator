@@ -5,6 +5,7 @@ import {GithubUserIntegrationDto} from "./GithubTypes";
 export class GithubApi {
 
     private static readonly BASE_PATH = "https://api.github.com";
+    private static readonly DEFAULT_RATE_LIMIT_WAIT_SECONDS = 10;
 
     public getTheAuthenticatedUser(accessToken: string): Promise<GithubUserIntegrationDto> {
         const url = GithubApi.BASE_PATH + "/user";
@@ -52,8 +53,7 @@ export class GithubApi {
                 return new Error("Authentication required or GitHub access token is invalid");
             case StatusCodes.FORBIDDEN: {
                 if (resp.headers.get("x-ratelimit-remaining") === "0") {
-                    const waitSeconds = this.calculateWaitSeconds(Number(resp.headers.get("x-ratelimit-reset")));
-
+                    const waitSeconds = this.calculateWaitSeconds(resp.headers.get("x-ratelimit-reset"));
                     return new Error(`You have exceeded your Github rate limit, please try again in ${waitSeconds} seconds`);
                 }
                 return new Error("Operation is forbidden, please ensure you have sufficient permissions in Github account settings");
@@ -67,9 +67,15 @@ export class GithubApi {
         }
     }
 
-    private calculateWaitSeconds(resetTimeEpochSeconds: number): number {
-        const currentTimeEpochSeconds = Math.ceil(Date.now() / 1000);
-        return resetTimeEpochSeconds - currentTimeEpochSeconds;
+    private calculateWaitSeconds(xRateLimitReset: string | null): number {
+        if (!xRateLimitReset) {
+            return GithubApi.DEFAULT_RATE_LIMIT_WAIT_SECONDS;
+        }
+
+        const futureTimeSeconds = Number(xRateLimitReset);
+        const currentTimeSeconds = Math.ceil(Date.now() / 1000);
+
+        return futureTimeSeconds - currentTimeSeconds;
     }
 }
 
