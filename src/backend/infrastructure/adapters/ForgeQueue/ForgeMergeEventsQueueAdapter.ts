@@ -4,12 +4,12 @@ import {assertNonEmpty} from "../../../utils/StringUtils";
 
 export class ForgeMergeEventsQueueAdapter implements MergeEventsQueue {
 
-    private readonly queue;
+    private readonly queue: Queue;
 
-    constructor(queueName: string) {
-        assertNonEmpty(queueName, "Queue name must be provided");
+    constructor(queueKey: string) {
+        assertNonEmpty(queueKey, "Queue key must be provided");
 
-        this.queue = new Queue({key: queueName});
+        this.queue = new Queue({key: queueKey});
     }
 
     public async push(event: Record<string, unknown>): Promise<QueueJobStats> {
