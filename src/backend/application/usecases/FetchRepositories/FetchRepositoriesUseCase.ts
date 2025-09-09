@@ -56,6 +56,10 @@ export class FetchRepositoriesUseCase {
     }
 
     private filterPullsWithIssuesOnly(repositories: ReadonlyArray<VcsRepository>, issuesByPullNumber: Map<number, string>, existingIssues: ReadonlyArray<Issue>): ReadonlyArray<IssueAwareVcsRepository> {
+        if (existingIssues.length === 0) {
+            return repositories.map(repo => new IssueAwareVcsRepository(repo.info, []));
+        }
+
         const issuesByKey = new Map(
             existingIssues.map(issue => [issue.issueKey, issue])
         );
