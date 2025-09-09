@@ -13,9 +13,7 @@ export class JiraIntegrationMapper {
     }
 
     public isTransitionClosed(name: string | undefined | null): boolean {
-        return name !== undefined
-            && name !== null
-            && name.trim().length > 0
+        return !!name && name.trim().length > 0
             && JiraIntegrationMapper.CLOSED_JIRA_TRANSITION_NAMES.indexOf(name.toLowerCase()) !== -1;
     }
 }
