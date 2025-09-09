@@ -11,32 +11,32 @@ import {DI} from "./DI";
 export class BusinessOperations {
 
     public storeAccessToken(accountId: string, accessToken: string): Promise<void> {
-        const storeUseCase = new StoreAccessTokenUseCase(DI.github(), DI.forgeSecrets());
-        return storeUseCase.exec(accountId, accessToken);
+        return new StoreAccessTokenUseCase(DI.github(), DI.forgeSecrets())
+            .exec(accountId, accessToken);
     }
 
     public fetchRepositories(accountId: string): Promise<ReadonlyArray<IssueAwareVcsRepository>> {
-        const fetchUseCase = new FetchRepositoriesUseCase(DI.forgeSecrets(), DI.github(), DI.jiraKeyExtractor(), DI.jira());
-        return fetchUseCase.exec(accountId);
+        return new FetchRepositoriesUseCase(DI.forgeSecrets(), DI.github(), DI.jiraKeyExtractor(), DI.jira())
+            .exec(accountId);
     }
 
     public approvePull(accountId: string, repo: string, pullNumber: number): Promise<void> {
-        const approveUseCase = new ApprovePullRequestUseCase(DI.forgeSecrets(), DI.github());
-        return approveUseCase.exec(accountId, repo, pullNumber);
+        return new ApprovePullRequestUseCase(DI.forgeSecrets(), DI.github())
+            .exec(accountId, repo, pullNumber);
     }
 
     public mergePull(accountId: string, repo: string, pullNumber: number): Promise<void> {
-        const mergeUseCase =  new MergePullRequestUseCase(DI.forgeSecrets(), DI.github());
-        return mergeUseCase.exec(accountId, repo, pullNumber);
+        return new MergePullRequestUseCase(DI.forgeSecrets(), DI.github())
+            .exec(accountId, repo, pullNumber);
     }
 
     public notifyPullIsMerged(pullAction: PullRequestAction): Promise<void> {
-        const notifyUseCase = new NotifyPullRequestIsMergedUseCase(DI.jiraKeyExtractor(), DI.forgeMergeQueue());
-        return notifyUseCase.exec(pullAction);
+        return new NotifyPullRequestIsMergedUseCase(DI.jiraKeyExtractor(), DI.forgeMergeQueue())
+            .exec(pullAction);
     }
 
     public closeIssue(issueKey: string): Promise<void> {
-        const closeIssueUseCase = new CloseIssueUseCase(DI.jira(), DI.forgeMergeQueue());
-        return closeIssueUseCase.exec(issueKey);
+        return new CloseIssueUseCase(DI.jira(), DI.forgeMergeQueue())
+            .exec(issueKey);
     }
 }
