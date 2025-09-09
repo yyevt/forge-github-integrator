@@ -33,6 +33,10 @@ export class JiraApi {
         if (!resp.ok) {
             throw this.createApiError(resp);
         }
+        if (resp.status === StatusCodes.NO_CONTENT) {
+            return undefined as T;
+        }
+
         return resp.json();
     }
 
