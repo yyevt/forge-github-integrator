@@ -9,19 +9,21 @@ export const ConnectedScreen = () => {
     const [repos, setRepos] = useState<ReadonlyArray<RepositoryPresentationDto>>([]);
     const [fetchReposError, setFetchReposError] = useState("");
 
+    const loadRepositories = async () => {
+        setFetchReposError("");
+        setIsLoading(true);
+        try {
+            const info = await new ForgeGateway().getGithubReposWithPulls();
+            setRepos(info);
+        } catch (e) {
+            setFetchReposError(e instanceof Error ? e.message : `Unknown error occurred: ${e}`);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     useEffect(() => {
-        (async () => {
-            setFetchReposError("");
-            setIsLoading(true);
-            try {
-                const info = await new ForgeGateway().getGithubReposWithPulls();
-                setRepos(info);
-            } catch (e) {
-                setFetchReposError(e instanceof Error ? e.message : `Unknown error occurred: ${e}`);
-            } finally {
-                setIsLoading(false);
-            }
-        })();
+        loadRepositories();
     }, []);
 
     if (isLoading) {
@@ -37,7 +39,7 @@ export const ConnectedScreen = () => {
                     <Text>{fetchReposError}</Text>
                 </SectionMessage>
             )}
-            <GithubReposList repos={repos}/>
+            <GithubReposList repos={repos} onPullMerge={() => loadRepositories()}/>
         </Stack>
     );
 }

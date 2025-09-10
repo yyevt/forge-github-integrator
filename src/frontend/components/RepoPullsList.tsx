@@ -9,6 +9,7 @@ type RepoPullsListProps = {
     readonly pulls: ReadonlyArray<PullPresentationDto>;
     readonly pullsTotalCount: number;
     readonly isMergeAllowed: boolean;
+    readonly onPullMerge: () => void;
 }
 
 export const head: HeadType = {
@@ -24,10 +25,10 @@ export const head: HeadType = {
     ],
 };
 
-export const RepoPullsList = ({pulls, isMergeAllowed, pullsTotalCount}: RepoPullsListProps) => {
+export const RepoPullsList = ({pulls, isMergeAllowed, pullsTotalCount, onPullMerge}: RepoPullsListProps) => {
     const tableRows = useMemo(
-        () => createTableRows(pulls, isMergeAllowed),
-        [pulls, isMergeAllowed]
+        () => createTableRows(pulls, isMergeAllowed, onPullMerge),
+        [pulls, isMergeAllowed, onPullMerge]
     );
 
     return <>
@@ -44,7 +45,7 @@ export const RepoPullsList = ({pulls, isMergeAllowed, pullsTotalCount}: RepoPull
     </>;
 };
 
-const createTableRows = (pulls: ReadonlyArray<PullPresentationDto>, isMergeAllowed: boolean) => {
+const createTableRows = (pulls: ReadonlyArray<PullPresentationDto>, isMergeAllowed: boolean, onPullMerge: () => void) => {
     return pulls.map((pull, index) => {
 
         const isPullNonMergeable = isPullClosed(pull)
@@ -67,8 +68,13 @@ const createTableRows = (pulls: ReadonlyArray<PullPresentationDto>, isMergeAllow
                 {
                     content: (
                         <ButtonGroup>
-                            <ApproveButton pullRequest={pull}/>
-                            <MergeButton pullRequest={pull} isDisabled={!isMergeAllowed || isPullNonMergeable}/>
+                            <ApproveButton
+                                pullRequest={pull}
+                            />
+                            <MergeButton
+                                pullRequest={pull}
+                                isDisabled={!isMergeAllowed || isPullNonMergeable}
+                                onPullMerge={onPullMerge}/>
                         </ButtonGroup>
                     )
                 }

@@ -4,7 +4,13 @@ import {showToast} from "./Utils";
 import {ForgeGateway} from "../services/ForgeGateway";
 import {PullPresentationDto} from "../../common/PresentationTypes";
 
-export const MergeButton = ({pullRequest, isDisabled}: { pullRequest: PullPresentationDto, isDisabled: boolean }) => {
+type MergeButtonProps = {
+    readonly pullRequest: PullPresentationDto;
+    readonly isDisabled: boolean;
+    readonly onPullMerge: () => void;
+}
+
+export const MergeButton = ({pullRequest, isDisabled, onPullMerge}: MergeButtonProps) => {
     const [isMerging, setIsMerging] = useState(false);
 
     const merge = useCallback(async (): Promise<void> => {
@@ -12,6 +18,8 @@ export const MergeButton = ({pullRequest, isDisabled}: { pullRequest: PullPresen
         try {
             await new ForgeGateway().mergePullRequest(pullRequest);
             showToast("success", "Success!", "success", "Pull.ts request was successfully merged.");
+
+            onPullMerge();
         } catch (e) {
             console.error(e);
             showToast("err", "Error", "error", (e instanceof Error ? e.message : `Unknown error occurred: ${e}`));
