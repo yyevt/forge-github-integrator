@@ -13,7 +13,7 @@ import {AccessTokenStorage} from "../../application/ports/AccessTokenStorage";
 import {IssueKeyExtractor} from "../../application/usecases/NotifyPullRequestIsMerged/IssueKeyExtractor";
 import {JiraIssueKeyExtractor} from "../adapters/Jira/JiraIssueKeyExtractor";
 
-export class DI {
+export class ServiceProvider {
 
     public static github(): VersionControlPlatform {
       return new Github(new GithubApi(), new GithubIntegrationMapper());

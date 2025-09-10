@@ -6,37 +6,37 @@ import {IssueAwareVcsRepository} from "../../domain/entities/IssueAwareVcsReposi
 import {NotifyPullRequestIsMergedUseCase} from "../../application/usecases/NotifyPullRequestIsMerged/NotifyPullRequestIsMergedUseCase";
 import {PullRequestAction} from "../../domain/entities/PullRequestAction";
 import {CloseIssueUseCase} from "../../application/usecases/CloseIssue/CloseIssueUseCase";
-import {DI} from "./DI";
+import {ServiceProvider as SP} from "./ServiceProvider";
 
 export class BusinessOperations {
 
     public storeAccessToken(accountId: string, accessToken: string): Promise<void> {
-        return new StoreAccessTokenUseCase(DI.github(), DI.forgeSecrets())
+        return new StoreAccessTokenUseCase(SP.github(), SP.forgeSecrets())
             .exec(accountId, accessToken);
     }
 
     public fetchRepositories(accountId: string): Promise<ReadonlyArray<IssueAwareVcsRepository>> {
-        return new FetchRepositoriesUseCase(DI.forgeSecrets(), DI.github(), DI.jiraKeyExtractor(), DI.jira())
+        return new FetchRepositoriesUseCase(SP.forgeSecrets(), SP.github(), SP.jiraKeyExtractor(), SP.jira())
             .exec(accountId);
     }
 
     public approvePull(accountId: string, repo: string, pullNumber: number): Promise<void> {
-        return new ApprovePullRequestUseCase(DI.forgeSecrets(), DI.github())
+        return new ApprovePullRequestUseCase(SP.forgeSecrets(), SP.github())
             .exec(accountId, repo, pullNumber);
     }
 
     public mergePull(accountId: string, repo: string, pullNumber: number): Promise<void> {
-        return new MergePullRequestUseCase(DI.forgeSecrets(), DI.github())
+        return new MergePullRequestUseCase(SP.forgeSecrets(), SP.github())
             .exec(accountId, repo, pullNumber);
     }
 
     public notifyPullIsMerged(pullAction: PullRequestAction): Promise<void> {
-        return new NotifyPullRequestIsMergedUseCase(DI.jiraKeyExtractor(), DI.forgeMergeQueue())
+        return new NotifyPullRequestIsMergedUseCase(SP.jiraKeyExtractor(), SP.forgeMergeQueue())
             .exec(pullAction);
     }
 
     public closeIssue(issueKey: string): Promise<void> {
-        return new CloseIssueUseCase(DI.jira(), DI.forgeMergeQueue())
+        return new CloseIssueUseCase(SP.jira(), SP.forgeMergeQueue())
             .exec(issueKey);
     }
 }
