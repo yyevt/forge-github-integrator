@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`AdminPage renders correctly 1`] = `
+<Form
+  onSubmit={[Function]}
+>
+  <FormHeader
+    title="Please enter GitHub token"
+  >
+    Required fields are marked with an asterisk 
+    <RequiredAsterisk />
+  </FormHeader>
+  <FormSection>
+    <Label
+      labelFor="form-:r0:-token"
+    >
+      GitHub token 
+      <RequiredAsterisk />
+    </Label>
+    <Textfield
+      aria-invalid={false}
+      id="form-:r0:-token"
+      isInvalid={false}
+      name="token"
+      onBlur={[Function]}
+      onChange={[Function]}
+      placeholder="Paste token here"
+    />
+    <HelperMessage>
+      You can use classic tokens or fine-grained ones.
+    </HelperMessage>
+  </FormSection>
+  <FormFooter>
+    <LoadingButton
+      appearance="primary"
+      isLoading={false}
+      type="submit"
+    >
+      Save
+    </LoadingButton>
+  </FormFooter>
+</Form>
+`;

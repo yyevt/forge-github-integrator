@@ -1,0 +1,21 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`MergeButton renders disabled correctly 1`] = `
+<LoadingButton
+  isDisabled={true}
+  isLoading={false}
+  onClick={[Function]}
+>
+  Merge
+</LoadingButton>
+`;
+
+exports[`MergeButton renders enabled correctly 1`] = `
+<LoadingButton
+  isDisabled={false}
+  isLoading={false}
+  onClick={[Function]}
+>
+  Merge
+</LoadingButton>
+`;

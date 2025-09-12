@@ -1,0 +1,46 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`RepoMainInfo renders repository info correctly 1`] = `
+[
+  <Heading
+    as="h2"
+  >
+    <Inline>
+      <Link
+        href="https://github.com/org/design-system"
+      >
+        design-system
+      </Link>
+      <Tag
+        text="public"
+      />
+      <Lozenge
+        appearance="success"
+      >
+        Not disabled
+      </Lozenge>
+      <Lozenge
+        appearance="success"
+      >
+        Not archived
+      </Lozenge>
+    </Inline>
+  </Heading>,
+  <Text>
+    Created: 
+    Mon May 01 2023
+  </Text>,
+  <Text>
+    Owner: 
+    org
+  </Text>,
+  <TagGroup>
+    <Tag
+      text="TypeScript"
+    />
+    <Tag
+      text="CSS"
+    />
+  </TagGroup>,
+]
+`;

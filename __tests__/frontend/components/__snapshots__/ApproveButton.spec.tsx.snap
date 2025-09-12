@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`ApproveButton renders correctly 1`] = `
+<LoadingButton
+  isLoading={false}
+  onClick={[Function]}
+>
+  Approve
+</LoadingButton>
+`;
