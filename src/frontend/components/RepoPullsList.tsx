@@ -58,14 +58,15 @@ const createTableRows = (pulls: ReadonlyArray<PullPresentationDto>, isMergeAllow
         return ({
             key: `row-${index}-${pull.url}`,
             cells: [
-                {content: <Link href={`/browse/${pull.issueKey}`}>{pull.issueKey}</Link>},
-                {content: <Lozenge appearance="moved">{pull.issueIsClosed ? "Yes" : "No"}</Lozenge>},
-                {content: <Link href={pull.url}>{pull.title}</Link>},
-                {content: pull.authorLogin},
-                {content: <Lozenge appearance="inprogress">{pull.state}</Lozenge>},
-                {content: <Lozenge appearance="moved">{isPullDraft(pull) ? "Yes" : "No"}</Lozenge>},
-                {content: <Lozenge appearance="moved">{isPullNotClean(pull) ? "No" : "Yes"}</Lozenge>},
+                {key: "issue", content: <Link href={`/browse/${pull.issueKey}`}>{pull.issueKey}</Link>},
+                {key: "isIssueClosed", content: <Lozenge appearance="moved">{pull.issueIsClosed ? "Yes" : "No"}</Lozenge>},
+                {key: "title", content: <Link href={pull.url}>{pull.title}</Link>},
+                {key: "author", content: pull.authorLogin},
+                {key: "state", content: <Lozenge appearance="inprogress">{pull.state}</Lozenge>},
+                {key: "isDraft", content: <Lozenge appearance="moved">{isPullDraft(pull) ? "Yes" : "No"}</Lozenge>},
+                {key: "isClean", content: <Lozenge appearance="moved">{isPullNotClean(pull) ? "No" : "Yes"}</Lozenge>},
                 {
+                    key: "actions",
                     content: (
                         <ButtonGroup>
                             <ApproveButton

@@ -22,7 +22,7 @@ export const RepoMainInfo = ({repo}: { repo: RepositoryPresentationDto }) => {
             <Text>Owner: {repo.ownerLogin}</Text>
             {repo.languages.length > 0 && (
                 <TagGroup>
-                    {repo.languages.map(lang => <Tag text={lang}/>)}
+                    {repo.languages.map(lang => <Tag key={lang} text={lang}/>)}
                 </TagGroup>
             )}
         </>
