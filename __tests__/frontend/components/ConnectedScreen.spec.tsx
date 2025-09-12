@@ -34,7 +34,6 @@ describe("ConnectedScreen", () => {
 
         let reactRenderer: renderer.ReactTestRenderer;
 
-        // Use act to flush all state updates
         await act(async () => {
             reactRenderer = renderer.create(<ConnectedScreen />);
         });
