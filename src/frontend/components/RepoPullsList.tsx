@@ -84,7 +84,7 @@ const createTableRows = (pulls: ReadonlyArray<PullPresentationDto>, isMergeAllow
     });
 }
 
-const isPullClosed = (pull: PullPresentationDto) => pull.state !== 'OPEN';
+const isPullClosed = (pull: PullPresentationDto) => pull.state !== "OPEN";
 const isPullMerged = (pull: PullPresentationDto) => pull.merged;
 const isPullDraft = (pull: PullPresentationDto) => pull.isDraft;
 const isPullNotClean = (pull: PullPresentationDto) => pull.mergeable != "MERGEABLE";

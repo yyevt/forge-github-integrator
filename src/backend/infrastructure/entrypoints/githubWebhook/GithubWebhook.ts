@@ -10,8 +10,6 @@ if (getAppContext().environmentType === "DEVELOPMENT") {
         .then(webTriggerUrl => console.log("** WEB TRIGGER URL ** : ", webTriggerUrl));
 }
 
-const businessOperations = new BusinessOperations();
-
 const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerResponse> => {
     if (!req.body) {
         return sendTextResponse(StatusCodes.BAD_REQUEST, "Empty body provided");
@@ -33,7 +31,7 @@ const webhookHandler = async (req: WebTriggerRequest): Promise<WebTriggerRespons
 
     const pullAction = new GithubWebhookPullMetadataMapper().mapToEntity(body);
     try {
-        await businessOperations.notifyPullIsMerged(pullAction);
+        await new BusinessOperations().notifyPullIsMerged(pullAction);
     } catch (e) {
         return sendTextResponse(StatusCodes.INTERNAL_SERVER_ERROR, (e instanceof Error ? e.message : String(e)));
     }

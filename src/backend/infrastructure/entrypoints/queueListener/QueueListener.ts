@@ -2,8 +2,6 @@ import {AsyncEvent} from "@forge/events";
 import {Body} from "@forge/events/out/types";
 import {BusinessOperations} from "../../di/BusinessOperations";
 
-const businessOperations = new BusinessOperations();
-
 const asyncEventConsumer = async (event: AsyncEvent): Promise<void> => {
     const body = event.body;
     if (!body || !isIssueKeyMetadata(body)) {
@@ -18,7 +16,7 @@ const asyncEventConsumer = async (event: AsyncEvent): Promise<void> => {
     }
 
     try {
-        await businessOperations.closeIssue(issueKey);
+        await new BusinessOperations().closeIssue(issueKey);
     } catch (e) {
         console.error((e instanceof Error ? e.message : String(e)) + ". Event: ", event.eventId, event.queueName);
     }
