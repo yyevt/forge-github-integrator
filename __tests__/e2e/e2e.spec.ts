@@ -33,16 +33,12 @@ describe("Forge-Github Integrator Token setup page", () => {
         await driver.wait(until.elementIsVisible(usernameInput), 5000)
             .sendKeys(ATLASSIAN_EMAIL);
 
-        await driver.sleep(2000);
-
         await driver.findElement(By.id("login-submit"))
             .click();
 
         const passwordInput = await driver.wait(until.elementLocated(By.id("password")), 15000);
         await driver.wait(until.elementIsVisible(passwordInput), 5000)
             .sendKeys(ATLASSIAN_PASSWORD);
-
-        await driver.sleep(2000);
 
         await driver.findElement(By.id("login-submit"))
             .click();
