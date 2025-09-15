@@ -2,6 +2,9 @@ import {ApprovePullRequestUseCase} from "../../../../../src/backend/application/
 import {AccessTokenStorage} from "../../../../../src/backend/application/ports/AccessTokenStorage";
 import {VersionControlPlatform} from "../../../../../src/backend/application/ports/VersionControlPlatform";
 
+/**
+ * N.B! Not all use cases are tested
+ */
 describe("ApprovePullRequestUseCase", () => {
     const mockAccessTokenStorage: jest.Mocked<AccessTokenStorage> = {
         get: jest.fn(),
