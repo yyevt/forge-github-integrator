@@ -51,9 +51,14 @@ describe("Forge-Github Integrator Token setup page", () => {
 
         const tokenInput = await driver.wait(until.elementLocated(By.name("token")), 5000);
         expect(await tokenInput.isDisplayed()).toBe(true);
+        await tokenInput.sendKeys("ghp_111111111111111111111111111111111111");
 
         const saveButton = await driver.wait(until.elementLocated(By.xpath("//form//button")), 5000);
         expect(await saveButton.isDisplayed()).toBe(true);
         expect(await saveButton.getText()).toBe("Save");
+        await saveButton.click();
+
+        const alertDiv = await driver.wait(until.elementLocated(By.css("div[role='alert']")), 10000);
+        await driver.wait(until.elementIsVisible(alertDiv), 5000);
     });
 });
