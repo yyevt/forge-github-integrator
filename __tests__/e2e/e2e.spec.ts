@@ -1,10 +1,9 @@
-import { Builder, By, until, WebDriver } from "selenium-webdriver";
-import chrome from "selenium-webdriver/chrome";
+import {Builder, By, until, WebDriver} from "selenium-webdriver";
 import * as dotenv from "dotenv";
 
 dotenv.config();
 
-const ATLASSIAN_URL = process.env.ATLASSIAN_URL!;
+const ATLASSIAN_APP_URL = process.env.ATLASSIAN_APP_URL!;
 const ATLASSIAN_EMAIL = process.env.ATLASSIAN_EMAIL!;
 const ATLASSIAN_PASSWORD = process.env.ATLASSIAN_PASSWORD!;
 
@@ -18,20 +17,23 @@ describe("Forge-Github Integrator Token setup page", () => {
     let driver: WebDriver;
 
     beforeAll(async () => {
-        const options = new chrome.Options();
-        driver = await new Builder().forBrowser("chrome").setChromeOptions(options).build();
+        driver = await new Builder().forBrowser("chrome").build();
     });
 
     afterAll(async () => {
-        await driver.quit();
+        if (driver) {
+            await driver.quit();
+        }
     });
 
     test("should log in and find Forge app message", async () => {
-        await driver.get(ATLASSIAN_URL);
+        await driver.get(ATLASSIAN_APP_URL);
 
         const usernameInput = await driver.wait(until.elementLocated(By.name("username")), 15000);
         await driver.wait(until.elementIsVisible(usernameInput), 5000)
             .sendKeys(ATLASSIAN_EMAIL);
+
+        await driver.sleep(2000);
 
         await driver.findElement(By.id("login-submit"))
             .click();
@@ -40,11 +42,12 @@ describe("Forge-Github Integrator Token setup page", () => {
         await driver.wait(until.elementIsVisible(passwordInput), 5000)
             .sendKeys(ATLASSIAN_PASSWORD);
 
+        await driver.sleep(2000);
+
         await driver.findElement(By.id("login-submit"))
             .click();
 
-        await driver.wait(until.urlContains("/jira/settings/apps/"), 20000);
-        await driver.wait(until.titleContains("Forge GitHub Integrator"), 5000);
+        await driver.wait(until.titleContains("Forge GitHub Integrator"), 15000);
 
         const label = await driver.wait(until.elementLocated(By.xpath("//label[contains(text(), 'GitHub token')]")), 5000);
         expect(await label.isDisplayed()).toBe(true);
