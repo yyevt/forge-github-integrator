@@ -11,7 +11,7 @@ const ATLASSIAN_PASSWORD = process.env.ATLASSIAN_PASSWORD!;
 jest.setTimeout(60000);
 
 /**
- * N.B! Not all use cases are tested
+ * N.B! Not all pages are tested
  */
 describe("Forge-Github Integrator Token setup page", () => {
 
