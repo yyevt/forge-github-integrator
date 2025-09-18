@@ -2,28 +2,28 @@ import {fetch, Response} from "@forge/api";
 import {StatusCodes} from "http-status-codes";
 import {GithubUserIntegrationDto} from "./GithubTypes";
 
-export class GithubApi {
+export class GithubSdk {
 
-    private static readonly BASE_PATH = "https://api.github.com";
+    private static readonly BASE_API_PATH = "https://api.github.com";
     private static readonly DEFAULT_RATE_LIMIT_WAIT_SECONDS = 10;
 
     public getTheAuthenticatedUser(accessToken: string): Promise<GithubUserIntegrationDto> {
-        const url = GithubApi.BASE_PATH + "/user";
+        const url = GithubSdk.BASE_API_PATH + "/user";
         return this.request("GET", url, accessToken);
     }
 
     public graphQL<T>(accessToken: string, body: object): Promise<T> {
-        const url = GithubApi.BASE_PATH + "/graphql";
+        const url = GithubSdk.BASE_API_PATH + "/graphql";
         return this.request("POST", url, accessToken, JSON.stringify(body));
     }
 
     public createReviewForPullRequest(accessToken: string, owner: string, repo: string, pullNumber: number, reviewBody: object): Promise<void> {
-        const url = GithubApi.BASE_PATH + `/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`;
+        const url = GithubSdk.BASE_API_PATH + `/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`;
         return this.request("POST", url, accessToken, JSON.stringify(reviewBody));
     }
 
     public mergePullRequest(accessToken: string, owner: string, repo: string, pullNumber: number): Promise<void> {
-        const url = GithubApi.BASE_PATH + `/repos/${owner}/${repo}/pulls/${pullNumber}/merge`;
+        const url = GithubSdk.BASE_API_PATH + `/repos/${owner}/${repo}/pulls/${pullNumber}/merge`;
         return this.request("PUT", url, accessToken);
     }
 
@@ -69,7 +69,7 @@ export class GithubApi {
 
     private calculateWaitSeconds(xRateLimitReset: string | null): number {
         if (!xRateLimitReset) {
-            return GithubApi.DEFAULT_RATE_LIMIT_WAIT_SECONDS;
+            return GithubSdk.DEFAULT_RATE_LIMIT_WAIT_SECONDS;
         }
 
         const futureTimeSeconds = Number(xRateLimitReset);

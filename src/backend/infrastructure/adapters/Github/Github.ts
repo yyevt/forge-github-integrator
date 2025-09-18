@@ -1,7 +1,7 @@
 import {GithubRepositoriesIntegrationDto} from "./GithubTypes";
 import {Limits, VersionControlPlatform} from "../../../application/ports/VersionControlPlatform";
 import {VcsRepository} from "../../../domain/entities/VcsRepository";
-import {GithubApi} from "./GithubApi";
+import {GithubSdk} from "./GithubSdk";
 import {GithubIntegrationMapper} from "./GithubIntegrationMapper";
 
 export class Github implements VersionControlPlatform {
@@ -49,7 +49,7 @@ export class Github implements VersionControlPlatform {
     }`;
 
     constructor(
-        private readonly githubApi: GithubApi,
+        private readonly githubSdk: GithubSdk,
         private readonly githubMapper: GithubIntegrationMapper
     ) {
     }
@@ -59,11 +59,11 @@ export class Github implements VersionControlPlatform {
             throw new Error("Github access token has incorrect format");
         }
 
-        await this.githubApi.getTheAuthenticatedUser(accessToken);
+        await this.githubSdk.getTheAuthenticatedUser(accessToken);
     }
 
     public async getRepositories(accessToken: string, pullsStates: ReadonlyArray<string>, limits: Limits): Promise<ReadonlyArray<VcsRepository>> {
-        const user = await this.githubApi.getTheAuthenticatedUser(accessToken);
+        const user = await this.githubSdk.getTheAuthenticatedUser(accessToken);
 
         const query = Github.GET_REPOS_WITH_PRS_QL
             .replace("%login%", user.login)
@@ -72,24 +72,24 @@ export class Github implements VersionControlPlatform {
             .replace("%pullsLimit%", String(limits.pulls))
             .replace("%pullsStates%", pullsStates.join(","));
 
-        const dto = await this.githubApi.graphQL<GithubRepositoriesIntegrationDto>(accessToken, {query});
+        const dto = await this.githubSdk.graphQL<GithubRepositoriesIntegrationDto>(accessToken, {query});
         return this.githubMapper.mapToEntity(dto);
     }
 
     public async approvePull(accessToken: string, repo: string, pullNumber: number): Promise<void> {
-        const user = await this.githubApi.getTheAuthenticatedUser(accessToken);
+        const user = await this.githubSdk.getTheAuthenticatedUser(accessToken);
 
         const reviewBody = {
             event: "APPROVE",
             body: "Approved with Forge-Github integration"
         };
 
-        return this.githubApi.createReviewForPullRequest(accessToken, user.login, repo, pullNumber, reviewBody);
+        return this.githubSdk.createReviewForPullRequest(accessToken, user.login, repo, pullNumber, reviewBody);
     }
 
     public async mergePull(accessToken: string, repo: string, pullNumber: number): Promise<void> {
-        const user = await this.githubApi.getTheAuthenticatedUser(accessToken);
+        const user = await this.githubSdk.getTheAuthenticatedUser(accessToken);
 
-        return this.githubApi.mergePullRequest(accessToken, user.login, repo, pullNumber);
+        return this.githubSdk.mergePullRequest(accessToken, user.login, repo, pullNumber);
     }
 }

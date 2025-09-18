@@ -1,23 +1,23 @@
-import {JiraApi} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraApi";
+import {JiraSdk} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraSdk";
 import {JiraIntegrationMapper} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraIntegrationMapper";
 import {Jira} from "../../../../../src/backend/infrastructure/adapters/Jira/Jira";
 import {Issue} from "../../../../../src/backend/domain/entities/Issue";
 import {JiraIssueShortDto, JiraTransitionsDto} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraTypes";
 
-jest.mock("../../../../../src/backend/infrastructure/adapters/Jira/JiraApi");
+jest.mock("../../../../../src/backend/infrastructure/adapters/Jira/JiraSdk");
 
 /**
  * N.B! Not all methods and classes are tested, only important ones
  */
 describe("Jira", () => {
-    let jiraApi: jest.Mocked<JiraApi>;
+    let jiraSdk: jest.Mocked<JiraSdk>;
     let jira: Jira;
 
     beforeEach(() => {
         jest.clearAllMocks();
 
-        jiraApi = new JiraApi() as jest.Mocked<JiraApi>;
-        jira = new Jira(jiraApi, new JiraIntegrationMapper());
+        jiraSdk = new JiraSdk() as jest.Mocked<JiraSdk>;
+        jira = new Jira(jiraSdk, new JiraIntegrationMapper());
 
         jest.spyOn(console, "warn").mockImplementation(() => {});
     });
@@ -25,7 +25,7 @@ describe("Jira", () => {
     describe("retrieveIssue", () => {
 
         it("should call jiraApi.getIssue and map result to entity", async () => {
-            jiraApi.getIssue.mockResolvedValue({
+            jiraSdk.getIssue.mockResolvedValue({
                 id: "1",
                 key: "ABC-1",
                 expand: "",
@@ -44,7 +44,7 @@ describe("Jira", () => {
 
             const result = await jira.retrieveIssue("ABC-1");
 
-            expect(jiraApi.getIssue).toHaveBeenCalledWith("ABC-1", ["key", "summary", "status"]);
+            expect(jiraSdk.getIssue).toHaveBeenCalledWith("ABC-1", ["key", "summary", "status"]);
             expect(result).toStrictEqual(new Issue({issueKey: "ABC-1", isClosed: true}));
         });
     });
@@ -52,7 +52,7 @@ describe("Jira", () => {
     describe("closeIssue", () => {
 
         it("should warn and return if no closing transition found", async () => {
-            jiraApi.getTransitions.mockResolvedValue({
+            jiraSdk.getTransitions.mockResolvedValue({
                 transitions: [
                     {id: "1", name: "In Progress"},
                     {id: "2", name: "Review"}
@@ -62,7 +62,7 @@ describe("Jira", () => {
             await expect(jira.closeIssue("ABC-123")).resolves
                 .toBeUndefined();
 
-            expect(jiraApi.doTransition).not.toHaveBeenCalled();
+            expect(jiraSdk.doTransition).not.toHaveBeenCalled();
             expect(console.warn).toHaveBeenCalledWith("No closing transition found for Jira ticket ABC-123");
         });
     });

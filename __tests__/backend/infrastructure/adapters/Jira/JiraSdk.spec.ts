@@ -1,6 +1,6 @@
 import {asApp} from "@forge/api";
 import {StatusCodes} from "http-status-codes";
-import {JiraApi} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraApi";
+import {JiraSdk} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraSdk";
 import {JiraIssueShortDto, JiraIssuesShortDto} from "../../../../../src/backend/infrastructure/adapters/Jira/JiraTypes";
 
 jest.mock("@forge/api", () => ({
@@ -11,10 +11,10 @@ jest.mock("@forge/api", () => ({
 /**
  * N.B! Not all methods and classes are tested, only important ones
  */
-describe("JiraApi", () => {
+describe("JiraSdk", () => {
 
     const mockRequestJira = jest.fn();
-    let api: JiraApi;
+    let jiraSdk: JiraSdk;
 
     beforeEach(() => {
         mockRequestJira.mockReset();
@@ -22,7 +22,7 @@ describe("JiraApi", () => {
             requestJira: mockRequestJira
         });
 
-        api = new JiraApi();
+        jiraSdk = new JiraSdk();
     });
 
     it("should call correct endpoint for searchJQL", async () => {
@@ -47,7 +47,7 @@ describe("JiraApi", () => {
 
         mockRequestJira.mockResolvedValue({ok: true, status: 200, json: () => Promise.resolve(issuesDto)});
 
-        const result = await api.searchJQL({jql: "key in ('ABC-1')"});
+        const result = await jiraSdk.searchJQL({jql: "key in ('ABC-1')"});
 
         expect(mockRequestJira).toHaveBeenCalledWith("/rest/api/3/search/jql", expect.objectContaining({
             method: "POST",
@@ -77,7 +77,7 @@ describe("JiraApi", () => {
 
         mockRequestJira.mockResolvedValue({ok: true, status: 200, json: () => Promise.resolve(issueDto)});
 
-        const result = await api.getIssue("ABC-123", ["summary", "status"]);
+        const result = await jiraSdk.getIssue("ABC-123", ["summary", "status"]);
 
         expect(mockRequestJira).toHaveBeenCalledWith("/rest/api/3/issue/ABC-123?fields=summary,status", expect.objectContaining({
             method: "GET",
@@ -92,7 +92,7 @@ describe("JiraApi", () => {
 
         mockRequestJira.mockResolvedValue({ok: true, status: 200, json: () => Promise.resolve(transitionsDto)});
 
-        const result = await api.getTransitions("ABC-321");
+        const result = await jiraSdk.getTransitions("ABC-321");
 
         expect(mockRequestJira).toHaveBeenCalledWith("/rest/api/3/issue/ABC-321/transitions", expect.objectContaining({
             method: "GET",
@@ -105,7 +105,7 @@ describe("JiraApi", () => {
     it("should call doTransition with correct body", async () => {
         mockRequestJira.mockResolvedValue({ok: true, status: StatusCodes.NO_CONTENT, json: () => Promise.resolve()});
 
-        await expect(api.doTransition("ABC-321", {transition: {id: "51"}})).resolves
+        await expect(jiraSdk.doTransition("ABC-321", {transition: {id: "51"}})).resolves
             .toBeUndefined();
 
         expect(mockRequestJira).toHaveBeenCalledWith("/rest/api/3/issue/ABC-321/transitions", expect.objectContaining({
@@ -117,7 +117,7 @@ describe("JiraApi", () => {
     it("should throw an error for <403 Forbidden> status", async () => {
         mockRequestJira.mockResolvedValue({ok: false, status: StatusCodes.FORBIDDEN, statusText: "Forbidden"});
 
-        await expect(api.getTransitions("ABC-999")).rejects
+        await expect(jiraSdk.getTransitions("ABC-999")).rejects
             .toThrow("Operation is forbidden, please ensure you have required Jira admin or site admin permissions");
     });
 
@@ -128,14 +128,14 @@ describe("JiraApi", () => {
             statusText: "I am a teapot, not a coffee maker"
         });
 
-        await expect(api.getTransitions("ABC-999")).rejects
+        await expect(jiraSdk.getTransitions("ABC-999")).rejects
             .toThrow("Error occurred: 418: I am a teapot, not a coffee maker");
     });
 
     it("should return undefined for <204 No Content> response", async () => {
         mockRequestJira.mockResolvedValue({ok: true, status: StatusCodes.NO_CONTENT});
 
-        const result = await api.doTransition("ABC-321", {transition: {id: "51"}});
+        const result = await jiraSdk.doTransition("ABC-321", {transition: {id: "51"}});
 
         expect(result).toBeUndefined();
     });

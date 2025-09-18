@@ -1,8 +1,8 @@
 import {Github} from "../adapters/Github/Github";
 import {Jira} from "../adapters/Jira/Jira";
-import {JiraApi} from "../adapters/Jira/JiraApi";
+import {JiraSdk} from "../adapters/Jira/JiraSdk";
 import {JiraIntegrationMapper} from "../adapters/Jira/JiraIntegrationMapper";
-import {GithubApi} from "../adapters/Github/GithubApi";
+import {GithubSdk} from "../adapters/Github/GithubSdk";
 import {GithubIntegrationMapper} from "../adapters/Github/GithubIntegrationMapper";
 import {ForgeMergeEventsQueueAdapter} from "../adapters/ForgeQueue/ForgeMergeEventsQueueAdapter";
 import {ForgeSecretStorage} from "../adapters/ForgeStore/ForgeSecretStorage";
@@ -16,11 +16,11 @@ import {JiraIssueKeyExtractor} from "../adapters/Jira/JiraIssueKeyExtractor";
 export class ServiceProvider {
 
     public static github(): VersionControlPlatform {
-      return new Github(new GithubApi(), new GithubIntegrationMapper());
+      return new Github(new GithubSdk(), new GithubIntegrationMapper());
     }
 
     public static jira(): IssueTrackingSoftware {
-        return new Jira(new JiraApi(), new JiraIntegrationMapper());
+        return new Jira(new JiraSdk(), new JiraIntegrationMapper());
     }
 
     public static jiraKeyExtractor(): IssueKeyExtractor {
