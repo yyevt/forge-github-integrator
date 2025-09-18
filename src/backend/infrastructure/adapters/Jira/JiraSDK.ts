@@ -2,7 +2,7 @@ import {JiraTransitionsDto} from "./JiraTypes";
 import {asApp, Response, Route, route} from "@forge/api";
 import {StatusCodes} from "http-status-codes";
 
-export class JiraSdk {
+export class JiraSDK {
 
     public searchJQL<T>(query: object): Promise<T> {
         return this.request("POST", route`/rest/api/3/search/jql`, JSON.stringify(query));

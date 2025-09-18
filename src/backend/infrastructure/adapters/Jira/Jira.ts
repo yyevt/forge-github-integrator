@@ -1,13 +1,13 @@
 import {Issue} from "src/backend/domain/entities/Issue";
 import {IssueTrackingSoftware} from "../../../application/ports/IssueTrackingSoftware";
-import {JiraSdk} from "./JiraSdk";
+import {JiraSDK} from "./JiraSDK";
 import {JiraIssueShortDto, JiraIssuesShortDto} from "./JiraTypes";
 import {JiraIntegrationMapper} from "./JiraIntegrationMapper";
 
 export class Jira implements IssueTrackingSoftware {
 
     constructor(
-        private readonly jiraSdk: JiraSdk,
+        private readonly jiraSDK: JiraSDK,
         private readonly jiraIntegrationMapper: JiraIntegrationMapper
     ) {
     }
@@ -15,17 +15,17 @@ export class Jira implements IssueTrackingSoftware {
     public async searchIssues(issueKeys: ReadonlyArray<string>): Promise<ReadonlyArray<Issue>> {
         const jql = `key in (${issueKeys.map(k => "'" + k + "'").join(",")})`;
 
-        const issueDtos = await this.jiraSdk.searchJQL<JiraIssuesShortDto>({jql, fields: ["key", "summary", "status"]});
+        const issueDtos = await this.jiraSDK.searchJQL<JiraIssuesShortDto>({jql, fields: ["key", "summary", "status"]});
         return issueDtos.issues.map(issueDto => this.jiraIntegrationMapper.mapToEntity(issueDto));
     }
 
     public async retrieveIssue(issueKey: string): Promise<Issue> {
-        const issueDto = await this.jiraSdk.getIssue<JiraIssueShortDto>(issueKey, ["key", "summary", "status"]);
+        const issueDto = await this.jiraSDK.getIssue<JiraIssueShortDto>(issueKey, ["key", "summary", "status"]);
         return this.jiraIntegrationMapper.mapToEntity(issueDto);
     }
 
     public async closeIssue(issueKey: string): Promise<void> {
-        const transitionsDto = await this.jiraSdk.getTransitions(issueKey);
+        const transitionsDto = await this.jiraSDK.getTransitions(issueKey);
         if (transitionsDto.transitions.length === 0) {
             console.warn(`No transitions found for Jira ticket ${issueKey}`);
             return;
@@ -37,6 +37,6 @@ export class Jira implements IssueTrackingSoftware {
             return;
         }
 
-        return this.jiraSdk.doTransition(issueKey, {transition: {id: closingTransition.id}});
+        return this.jiraSDK.doTransition(issueKey, {transition: {id: closingTransition.id}});
     }
 }
