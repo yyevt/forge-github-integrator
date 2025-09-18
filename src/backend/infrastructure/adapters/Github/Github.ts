@@ -50,7 +50,7 @@ export class Github implements VersionControlPlatform {
 
     constructor(
         private readonly githubSdk: GithubSdk,
-        private readonly githubMapper: GithubIntegrationMapper
+        private readonly githubIntegrationMapper: GithubIntegrationMapper
     ) {
     }
 
@@ -73,7 +73,7 @@ export class Github implements VersionControlPlatform {
             .replace("%pullsStates%", pullsStates.join(","));
 
         const dto = await this.githubSdk.graphQL<GithubRepositoriesIntegrationDto>(accessToken, {query});
-        return this.githubMapper.mapToEntity(dto);
+        return this.githubIntegrationMapper.mapToEntity(dto);
     }
 
     public async approvePull(accessToken: string, repo: string, pullNumber: number): Promise<void> {

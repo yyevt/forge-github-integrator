@@ -8,7 +8,7 @@ export class Jira implements IssueTrackingSoftware {
 
     constructor(
         private readonly jiraSdk: JiraSdk,
-        private readonly jiraMapper: JiraIntegrationMapper
+        private readonly jiraIntegrationMapper: JiraIntegrationMapper
     ) {
     }
 
@@ -16,12 +16,12 @@ export class Jira implements IssueTrackingSoftware {
         const jql = `key in (${issueKeys.map(k => "'" + k + "'").join(",")})`;
 
         const issueDtos = await this.jiraSdk.searchJQL<JiraIssuesShortDto>({jql, fields: ["key", "summary", "status"]});
-        return issueDtos.issues.map(issueDto => this.jiraMapper.mapToEntity(issueDto));
+        return issueDtos.issues.map(issueDto => this.jiraIntegrationMapper.mapToEntity(issueDto));
     }
 
     public async retrieveIssue(issueKey: string): Promise<Issue> {
         const issueDto = await this.jiraSdk.getIssue<JiraIssueShortDto>(issueKey, ["key", "summary", "status"]);
-        return this.jiraMapper.mapToEntity(issueDto);
+        return this.jiraIntegrationMapper.mapToEntity(issueDto);
     }
 
     public async closeIssue(issueKey: string): Promise<void> {
@@ -31,7 +31,7 @@ export class Jira implements IssueTrackingSoftware {
             return;
         }
 
-        const closingTransition = transitionsDto.transitions.find(tr => this.jiraMapper.isTransitionClosed(tr.name));
+        const closingTransition = transitionsDto.transitions.find(tr => this.jiraIntegrationMapper.isTransitionClosed(tr.name));
         if (!closingTransition) {
             console.warn(`No closing transition found for Jira ticket ${issueKey}`);
             return;
